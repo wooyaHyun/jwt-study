@@ -4,9 +4,14 @@ import com.example.jwtstudy.domain.member.Member;
 import com.example.jwtstudy.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
+@NoArgsConstructor
+@ToString
 public class MemberJoinRequestDto {
 
     private String username;
@@ -25,5 +30,9 @@ public class MemberJoinRequestDto {
                 .password(passwordEncoder.encode(password))
                 .role(Role.USER)
                 .build();
+    }
+
+    public UsernamePasswordAuthenticationToken toAuthentication() {
+        return new UsernamePasswordAuthenticationToken(username, password);
     }
 }

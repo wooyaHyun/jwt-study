@@ -1,15 +1,16 @@
 spring:
-  session:
-    store-type: jdbc
-    jdbc:
-      initialize-schema: always
+  #session:
+  #  store-type: jdbc
+  #  jdbc:
+  #    initialize-schema: always
   profiles:
     active: local
+    include: oauth
   h2:
     console:
       enabled: true
   datasource:
-    url: jdbc:h2:~/security;AUTO_SERVER=true
+    url: jdbc:h2:~/jwt;AUTO_SERVER=true
     username: sa
     password:
     driver-class-name: org.h2.Driver

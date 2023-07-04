@@ -1,19 +1,52 @@
 {{>layout/header}}
 
 <h2>로그인 화면 </h2>
-<form class="form-signin" method="post" action="/login/login-proc">
+<!--<form class="form-signin" method="post" action="/login/login-proc">-->
 
     <input type="text" id="username" name="username" class="form-control" placeholder="아이디" autofocus="" />
     <input type="text" id="password" name="password" class="form-control" placeholder="비밀번호" />
 
 
 
-    <input id="joinBtn" type="submit" class="btn btn-secondary active" value="로그인" />
+    <input id="joinBtn" type="button" class="btn btn-secondary active" value="로그인" />
     <a href="/login/join" class="btn btn-info active" role="button">회원가입</a>
 
-</form>
+<!--</form>-->
 
 
 
 
 {{>layout/footer}}
+
+
+<script>
+let flag = 0;
+let _private = '';
+
+$("#joinBtn").click(function(){
+
+    let username = $("#username").val();
+    console.log(username);
+
+    const data = {
+        username : $("#username").val(),
+        password : $("#password").val()
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/auth/login',
+        data: JSON.stringify(data),
+        dataType : 'json',
+        contentType: 'application/json'
+    }).done(function(data){
+        console.log(data);
+        localStorage.setItem('Authorization', data.grantType + " " + data.accessToken);
+        _private = data.accessToken;
+        window.location.href = "/";
+    }).fail(function(error){
+        console.log(error);
+    });
+});
+
+
+</script>

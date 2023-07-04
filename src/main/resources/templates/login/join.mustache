@@ -1,7 +1,7 @@
 {{>layout/header}}
 
 <h2>회원가입 화면 </h2>
-<form class="form-signin" method="post" action="/login/join">
+<!--<form class="form-signin" method="post" action="/auth/signup">-->
 
     <span><input type="text" id="username" name="username" class="form-control" placeholder="아이디" autofocus="" /></span>
     <br><br>
@@ -11,13 +11,36 @@
     <div style="text-align: center">
         <input id="joinBtn" style="display :inline-block;"type="submit" class="btn btn-info active" value="회원가입" />
     </div>
-</form>
+<!--</form>-->
 
 
 {{>layout/footer}}
 
 <script>
 let flag = 0;
+
+$("#joinBtn").click(function(){
+
+    let username = $("#username").val();
+    console.log(username);
+
+    const data = {
+        username : $("#username").val(),
+        password : $("#password").val()
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/auth/signup',
+        data: JSON.stringify(data),
+        dataType : 'json',
+        contentType: 'application/json'
+    }).done(function(data){
+        console.log(data);
+        window.location.href = '/login/login';
+    }).fail(function(error){
+        console.log(error);
+    });
+});
 
 $("#duplicateChek").click(function(){
 

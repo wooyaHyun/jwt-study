@@ -1,7 +1,11 @@
 package com.example.jwtstudy.config;
 
+import com.example.jwtstudy.config.jwt.JwtFilter;
+import com.example.jwtstudy.config.jwt.JwtSecurityConfig;
+import com.example.jwtstudy.config.jwt.TokenProvider;
 import com.example.jwtstudy.domain.member.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -11,12 +15,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.PrintWriter;
 
@@ -26,10 +33,18 @@ import java.io.PrintWriter;
 public class SecurityConfig {
 
     private final MyUserDetailsService myUserDetailsService;
+    private final JwtFilter jwtFilter;
+    //private final TokenProvider tokenProvider;
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/h2-console/**", "/favicon.ico");
     }
 
     @Bean
@@ -47,9 +62,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers("/", "/login/**").permitAll()
-                                .requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
-                                .requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/", "/login/**", "/auth/**").permitAll()
+                                //.requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
+                                //.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) ->
@@ -62,7 +78,8 @@ public class SecurityConfig {
                                 httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .formLogin((formLogin) ->
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // (8)
+                /*.formLogin((formLogin) ->
                         formLogin
                                 .loginPage("/login/login")
                                 .usernameParameter("username")
@@ -72,40 +89,24 @@ public class SecurityConfig {
                 )
                 .logout((logoutConfig) ->
                         logoutConfig.logoutSuccessUrl("/")
-                )
+                )*/
                 .userDetailsService(myUserDetailsService);
+                //.apply(new JwtSecurityConfig(tokenProvider));
 
         return http.build();
     }
 
 
+
+
     public final AuthenticationEntryPoint unauthorizedEntryPoint =
             (request, response, authException) -> {
-                ErrorResponse fail = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Spring security unauthorized...");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                String json = new ObjectMapper().writeValueAsString(fail);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                PrintWriter writer = response.getWriter();
-                writer.write(json);
-                writer.flush();
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             };
 
     public  final AccessDeniedHandler accessDeniedHandler =
             (request, response, accessDeniedException) -> {
-                ErrorResponse fail = new ErrorResponse(HttpStatus.FORBIDDEN, "Spring security forbidden...");
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-                String json = new ObjectMapper().writeValueAsString(fail);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                PrintWriter writer = response.getWriter();
-                writer.write(json);
-                writer.flush();
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
             };
 
-    @Getter
-    @RequiredArgsConstructor
-    public class ErrorResponse {
-
-        private final HttpStatus status;
-        private final String message;
-    }
 }

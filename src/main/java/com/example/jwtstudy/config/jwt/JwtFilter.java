@@ -57,13 +57,6 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("::::::jwt Filter Check::::");
         String jwt = resolveToken(request);
 
-        if(StringUtils.hasText(jwt)){
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-            log.info("claims.getExpiration() :::{}", claims.getExpiration());
-        }
-
-
-
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
@@ -80,7 +73,7 @@ public class JwtFilter extends OncePerRequestFilter {
      */
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(Constants.AUTH_HEADER);
-
+        log.info("bearerToken :::: {}", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(Constants.TOKEN_TYPE)) {
             return bearerToken.substring(Constants.TOKEN_TYPE.length()).trim();
         }

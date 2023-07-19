@@ -49,9 +49,9 @@ public class IndexController {
         return "admin/admin";
     }
 
-    /*@GetMapping("/posts")
-    public String posts(@AuthenticationPrincipal UserDetails user, Model model){
-        model.addAttribute("user",user.getUsername());
+    @GetMapping("/post")
+    public String posts(){
+
         return "post/post";
-    }*/
+    }
 }

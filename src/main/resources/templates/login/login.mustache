@@ -8,9 +8,9 @@
 
 
 
-    <input id="joinBtn" type="button" class="btn btn-secondary active" value="로그인" />
+    <input id="loginBtn" type="button" class="btn btn-secondary active" value="로그인" />
     <a href="/login/join" class="btn btn-info active" role="button">회원가입</a>
-
+    <text id="tokenId"></text>
 <!--</form>-->
 
 
@@ -20,10 +20,21 @@
 
 
 <script>
+/*
 let flag = 0;
 let _private = '';
 
-$("#joinBtn").click(function(){
+
+const setHeader = function(token){
+    $(document).ajaxSend(function(event, xhr, option){
+        alert( token.grantType);
+        alert( token.accessToken);
+        let prefix = token.grantType;
+        xhr.setRequestHeader("Authorization", prefix + token.accessToken);
+    });
+};
+
+$("#loginBtn").click(function(){
 
     let username = $("#username").val();
     console.log(username);
@@ -42,7 +53,9 @@ $("#joinBtn").click(function(){
         console.log(data);
         //const token = data.accessToken;
         const token = data;
-        setHeader(token)
+
+        let _grant = data.grantType + " ";
+        let _token = data.accessToken;
 
         window.location.href = "/";
     }).fail(function(error){
@@ -51,11 +64,6 @@ $("#joinBtn").click(function(){
 });
 
 
-const setHeader = function(token){
-    $(document).ajaxSend(function(event, xhr, option){
-        let prefix = token.grantType;
-        xhr.setRequestHeader("Authorization", prefix + token.accessToken);
-    });
-};
+*/
 
 </script>

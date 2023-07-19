@@ -56,12 +56,14 @@ public class TokenProvider {
 
         long now = (new Date()).getTime();
 
-        log.info("now :::{}" , new Date(now));
+        log.info("now :::{}" , new Date(System.currentTimeMillis()));
 
          // 토큰 만료 시간
         Date accessTokenExpiresIn = new Date(now + Constants.ACCESS_TOKEN_EXPIRE_TIME);
+        Date refreshTokenExpiresIn = new Date(now + Constants.REFRESH_TOKEN_EXPIRE_TIME);
 
         log.info("accessTokenExpiresIn :::{}" , accessTokenExpiresIn);
+        log.info("accessTokenExpiresIn :::{}" , accessTokenExpiresIn.getTime());
 
         // Access Token 생성
         String accessToken = Jwts.builder()
@@ -73,7 +75,7 @@ public class TokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + Constants.REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(refreshTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
@@ -113,6 +115,7 @@ public class TokenProvider {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
+            log.info(e.getMessage());
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
@@ -120,7 +123,6 @@ public class TokenProvider {
         }
         return false;
     }
-
 
 
     private Claims parseClaims(String accessToken) {

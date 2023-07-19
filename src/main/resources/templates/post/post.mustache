@@ -7,8 +7,32 @@
 
 <a href="/admins" class="btn btn-secondary active" role="button">관리자</a>
 <a href="/logout" class="btn btn-info active" role="button">Logout</a><!--스프링시큐리티에서 기본적으로 제공하는 로그아웃 url-->
-{{user}}
+
+<input id="postsCall" type="button" class="btn btn-secondary active" value="data call" />
+
+<text id="tokenId"></text>
+
 {{>layout/footer}}
 
+
+<script>
+/*
+const init = function(){
+    $.ajax({
+        type: 'GET',
+        url: '/api/v1/posts/me'
+    }).done(function(data){
+        console.log(data);
+        $("#tokenId").text(data);
+    }).fail(function(error){
+        console.log(error);
+    });
+};
+*/
+//init();
+
+
+
+</script>
 
 

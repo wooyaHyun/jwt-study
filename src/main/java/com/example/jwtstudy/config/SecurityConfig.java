@@ -62,9 +62,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers("/", "/login/**", "/auth/**").permitAll()
-                                .requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
-                                .requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/", "/login/**", "/auth/**","/admins/**", "/post", "/post/**",  "/js/**").permitAll()
+                                .requestMatchers("/api/v1/posts/**").hasRole(Role.USER.name())
+                                .requestMatchers("/api/v1/admins/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) ->

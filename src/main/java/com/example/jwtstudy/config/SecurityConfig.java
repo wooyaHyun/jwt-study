@@ -34,7 +34,7 @@ public class SecurityConfig {
 
     private final MyUserDetailsService myUserDetailsService;
     private final JwtFilter jwtFilter;
-    //private final TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -62,10 +62,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/", "/login/**", "/auth/**").permitAll()
-                                //.requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
-                                //.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
+                                .requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) ->
@@ -78,20 +77,9 @@ public class SecurityConfig {
                                 httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // (8)
-                /*.formLogin((formLogin) ->
-                        formLogin
-                                .loginPage("/login/login")
-                                .usernameParameter("username")
-                                .passwordParameter("password")
-                                .loginProcessingUrl("/login/login-proc")
-                                .defaultSuccessUrl("/", true)
-                )
-                .logout((logoutConfig) ->
-                        logoutConfig.logoutSuccessUrl("/")
-                )*/
-                .userDetailsService(myUserDetailsService);
-                //.apply(new JwtSecurityConfig(tokenProvider));
+                //.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // (8)
+                .userDetailsService(myUserDetailsService)
+                .apply(new JwtSecurityConfig(tokenProvider));
 
         return http.build();
     }

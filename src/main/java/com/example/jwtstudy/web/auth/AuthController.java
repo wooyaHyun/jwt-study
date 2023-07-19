@@ -44,9 +44,9 @@ public class AuthController {
 
         TokenDto token = authService.login(memberRequestDto);
 
-        Cookie cookie = new Cookie("refresh", token.getRefreshToken().toString());
+        /*Cookie cookie = new Cookie("refresh", token.getRefreshToken().toString());
         cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        response.addCookie(cookie);*/
 
         return ResponseEntity.ok(token);
     }

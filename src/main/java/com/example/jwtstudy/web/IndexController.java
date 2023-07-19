@@ -35,13 +35,13 @@ public class IndexController {
         return "login/join";
     }
 
-    @PostMapping("/login/join")
+   /* @PostMapping("/login/join")
     public String userJoin(@ModelAttribute MemberJoinRequestDto requestDto) {
 
         memberService.addMember(requestDto);
 
         return "login/login";
-    }
+    }*/
 
     @GetMapping("/admins")
     public String adminPage(){
@@ -49,9 +49,9 @@ public class IndexController {
         return "admin/admin";
     }
 
-    @GetMapping("/posts")
+    /*@GetMapping("/posts")
     public String posts(@AuthenticationPrincipal UserDetails user, Model model){
         model.addAttribute("user",user.getUsername());
         return "post/post";
-    }
+    }*/
 }

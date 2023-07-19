@@ -14,9 +14,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public String addMember(MemberJoinRequestDto requestDto) {
+    /*public String addMember(MemberJoinRequestDto requestDto) {
+        if(memberRepository.existsByUsername(requestDto.getUsername())){
+            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
+        }
+
         return memberRepository.save(requestDto.toEntity(passwordEncoder)).getUsername();
-    }
+    }*/
 
     public MemberResponseDto findMemberInfoById(Long memberId) {
         return memberRepository.findById(memberId)

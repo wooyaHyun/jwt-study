@@ -27,10 +27,10 @@ public class RefreshToken extends BaseEntity {
 
     @Id
     @Column(name = "rt_key")
-    private String key;
+    private String key; // member ID
 
     @Column(name = "rt_value")
-    private String value;
+    private String value;   //refresh token string
 
     @Builder
     public RefreshToken(String key, String value) {

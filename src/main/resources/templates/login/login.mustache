@@ -40,13 +40,22 @@ $("#joinBtn").click(function(){
         contentType: 'application/json'
     }).done(function(data){
         console.log(data);
-        localStorage.setItem('Authorization', data.grantType + " " + data.accessToken);
-        _private = data.accessToken;
+        //const token = data.accessToken;
+        const token = data;
+        setHeader(token)
+
         window.location.href = "/";
     }).fail(function(error){
         console.log(error);
     });
 });
 
+
+const setHeader = function(token){
+    $(document).ajaxSend(function(event, xhr, option){
+        let prefix = token.grantType;
+        xhr.setRequestHeader("Authorization", prefix + token.accessToken);
+    });
+};
 
 </script>

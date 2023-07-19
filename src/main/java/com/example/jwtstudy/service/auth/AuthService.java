@@ -69,7 +69,7 @@ public class AuthService {
                 .build();
 
         refreshTokenRepository.save(refreshToken);
-
+        log.info("tokenDto :::: {}" , tokenDto.toString());
         // 5. 토큰 발급
         return tokenDto;
     }

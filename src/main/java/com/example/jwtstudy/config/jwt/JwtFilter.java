@@ -1,12 +1,18 @@
 package com.example.jwtstudy.config.jwt;
 
 import com.example.jwtstudy.constant.Constants;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,14 +25,27 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.security.Key;
+import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
+    private String secret;
+    private Key key;
+
+    public JwtFilter(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+
+        this.secret = "c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK";
+
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
 
     /**
      * jwt 토큰의 인증정보를 SecurityContext에 저장하는 역할 수행
@@ -38,9 +57,12 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("::::::jwt Filter Check::::");
         String jwt = resolveToken(request);
 
-        log.info("jwt ::: {}", jwt);
-        log.info("StringUtils.hasText(jwt) ::: {}", StringUtils.hasText(jwt));
-        log.info("tokenProvider.validateToken(jwt) ::: {}", tokenProvider.validateToken(jwt));
+        if(StringUtils.hasText(jwt)){
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+            log.info("claims.getExpiration() :::{}", claims.getExpiration());
+        }
+
+
 
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
@@ -58,13 +80,10 @@ public class JwtFilter extends OncePerRequestFilter {
      */
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(Constants.AUTH_HEADER);
-        log.info("bearerToken:::: {}", bearerToken);
-
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(Constants.TOKEN_TYPE)) {
             return bearerToken.substring(Constants.TOKEN_TYPE.length()).trim();
-            //return bearerToken.substring(7);
         }
-        return null;
+        return Strings.EMPTY;
     }
 }

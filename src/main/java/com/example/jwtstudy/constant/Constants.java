@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Constants {
 
-    public static final String TOKEN_TYPE = "Bearer";
+    public static final String TOKEN_TYPE = "Bearer ";
     public static final String AUTH_HEADER = "Authorization";
     public static final String AUTHORITIES_KEY = "auth";
 //    public static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분

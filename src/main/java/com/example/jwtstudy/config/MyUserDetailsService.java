@@ -21,8 +21,9 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findByUsername(username).map(this::createUserDetails).orElseThrow(() -> new UsernameNotFoundException("없는 회원 입니다..."));
-
+        return memberRepository.findByUsername(username)
+                .map(this::createUserDetails)
+                .orElseThrow(() -> new UsernameNotFoundException("없는 회원 입니다..."));
     }
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴

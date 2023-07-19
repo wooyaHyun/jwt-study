@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * 2023-06-30   SHW     최초 생성
  */
 
+
 // 직접 만든 TokenProvider 와 JwtFilter 를 SecurityConfig 에 적용할 때 사용
 @RequiredArgsConstructor
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
@@ -30,3 +31,4 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
+

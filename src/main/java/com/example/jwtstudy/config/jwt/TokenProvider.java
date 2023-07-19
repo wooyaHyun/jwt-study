@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -49,18 +50,18 @@ public class TokenProvider {
 
     public TokenDto createToken(Authentication authentication) {
 
-        log.info("authentication {}", authentication);
-
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        log.info("authorities {}", authorities);
-
         long now = (new Date()).getTime();
+
+        log.info("now :::{}" , new Date(now));
 
          // 토큰 만료 시간
         Date accessTokenExpiresIn = new Date(now + Constants.ACCESS_TOKEN_EXPIRE_TIME);
+
+        log.info("accessTokenExpiresIn :::{}" , accessTokenExpiresIn);
 
         // Access Token 생성
         String accessToken = Jwts.builder()
@@ -98,9 +99,9 @@ public class TokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 
     }
 

@@ -1,30 +1,4 @@
-{{>layout/header}}
-
-<h2>로그인 화면 </h2>
-<!--<form class="form-signin" method="post" action="/login/login-proc">-->
-
-    <input type="text" id="username" name="username" class="form-control" placeholder="아이디" autofocus="" />
-    <input type="text" id="password" name="password" class="form-control" placeholder="비밀번호" />
-
-
-
-    <input id="loginBtn" type="button" class="btn btn-secondary active" value="로그인" />
-    <a href="/login/join" class="btn btn-info active" role="button">회원가입</a>
-    <text id="tokenId"></text>
-<!--</form>-->
-
-
-
-
-{{>layout/footer}}
-
-<script type="module" src="/js/app/token.js"></script>
-
-<script>
 /*
-let _prefix = '';
-let _acToken= '';
-
 export function prefixFactory(){
     let prefix = _prefix;
     return {
@@ -42,6 +16,46 @@ export function tokenFactory(){
         },
     };
 }
+*/
+
+export default class Token {
+
+    constructor(prefix, acToken){
+        this.prefix = prefix;
+        this.acToken = acToken;
+    }
+
+    get prefix(){
+        return this._prefix;
+    }
+    set prefix(value){
+        this._prefix = value;
+    }
+
+    get acToken(){
+        return this._acToken;
+    }
+
+    set acToken(value){
+        this._acToken = value;
+    }
+
+}
+/*
+
+let _prefix = 'test';
+let _acToken = 'test';
+
+export function prefixFactory(){
+    let prefix = _prefix;
+    return prefix;
+}
+
+export function tokenFactory(){
+    let token = _acToken;
+    return token;
+}
+*/
 
 $("#loginBtn").click(function(){
 
@@ -59,15 +73,14 @@ $("#loginBtn").click(function(){
         dataType : 'json',
         contentType: 'application/json'
     }).done(function(data){
+        debugger;
         console.log(data);
         _prefix = data.grantType + " ";
         _acToken = data.accessToken;
+        new Token(_prefix, _acToken);
 
         window.location.href = "/";
     }).fail(function(error){
         console.log(error);
     });
 });
-*/
-
-</script>
